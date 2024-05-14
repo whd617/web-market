@@ -87,12 +87,13 @@ export class UsersService {
   async findById(id: number): Promise<UserProfileOutput> {
     try {
       const user = await this.users.findOneByOrFail({ id });
+
       return {
         ok: true,
         user,
       };
     } catch (error) {
-      return { ok: false, error: 'User Not Found' };
+      return { ok: false, error: 'Failed findById' };
     }
   }
 
@@ -124,13 +125,10 @@ export class UsersService {
   async deletAccount(userId: number): Promise<DeleteAccountOutput> {
     try {
       const user = await this.findById(userId);
-      if (!user) {
-        return { ok: false, error: 'User not found' };
-      }
-      await this.users.remove(user.user);
+      await this.users.delete({ id: user.user.id });
       return { ok: true, user: user.user };
     } catch (error) {
-      return { ok: false, error };
+      return { ok: false, error: 'Could not delete profile.' };
     }
   }
 
@@ -148,7 +146,7 @@ export class UsersService {
       }
       return { ok: false, error: 'Verification not found.' };
     } catch (error) {
-      return { ok: false, error };
+      return { ok: false, error: 'Could not verify Email.' };
     }
   }
 }
