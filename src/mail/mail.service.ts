@@ -8,15 +8,7 @@ import { EmailVar, MailModuleOptions } from './mail.interface';
 export class MailService {
   constructor(
     @Inject(CONFIG_OPTIONS) private readonly options: MailModuleOptions,
-  ) {
-    /* this.sendEmail('testing', 'test',)
-      .then(() => {
-        console.log('Message sent');
-      })
-      .catch((error) => {
-        console.log(error.response.body);
-      }); */
-  }
+  ) {}
   private async sendEmail(
     subject: string,
     template: string,
