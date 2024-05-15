@@ -257,7 +257,9 @@ describe('UserService', () => {
     };
 
     it('should remove the User Account', async () => {
-      usersRepository.findOneByOrFail.mockResolvedValue(mockedUser);
+      jest.spyOn(service, 'findById').mockImplementation(async () => {
+        return { ok: true, user: expect.any(Object) };
+      });
       usersRepository.delete.mockResolvedValue(mockedUser);
       const result = await service.deletAccount(mockedUser.id);
       expect(result).toEqual({
@@ -267,7 +269,9 @@ describe('UserService', () => {
     });
 
     it('should fail on exception', async () => {
-      usersRepository.findOneByOrFail.mockRejectedValue(new Error());
+      jest.spyOn(service, 'findById').mockImplementation(async () => {
+        throw new Error();
+      });
       const result = await service.deletAccount(mockedUser.id);
       expect(result).toEqual({ ok: false, error: 'Could not delete profile.' });
     });
