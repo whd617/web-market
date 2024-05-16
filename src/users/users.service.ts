@@ -102,11 +102,20 @@ export class UsersService {
     { email, password }: EidtProfileInput,
   ): Promise<EditProfileOutput> {
     try {
+      const exist: number = await this.users.count({ where: { email } });
+
+      if (exist) {
+        return { ok: false, error: 'The email is exist' };
+      }
+
       const user = await this.users.findOne({ where: { id: userId } });
+
       if (email) {
         user.email = email;
         user.verified = false;
+        // user의 id가 user.id를 갖는 모든 verification들을 삭제
         // 메일 인증 서비스 기능 구현
+        await this.verifications.delete({ user: { id: user.id } });
         const verification = await this.verifications.save(
           this.verifications.create({ user }),
         );
@@ -140,8 +149,8 @@ export class UsersService {
       });
       if (verification) {
         verification.user.verified = true;
-        await this.users.save(verification.user);
         await this.verifications.delete(verification.id);
+        await this.users.save(verification.user);
         return { ok: true };
       }
       return { ok: false, error: 'Verification not found.' };

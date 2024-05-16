@@ -11,6 +11,7 @@ const mockRepository = () => ({
   findOne: jest.fn(),
   save: jest.fn(),
   create: jest.fn(),
+  count: jest.fn(),
   findOneByOrFail: jest.fn(),
   delete: jest.fn(),
   remove: jest.fn(),
@@ -184,25 +185,34 @@ describe('UserService', () => {
   });
 
   describe('editProfile', () => {
-    it('should change email', async () => {
-      const oldUser = {
-        email: 'bs@email.com',
-        verified: true,
-      };
-      const editProfileArgs = {
-        userId: 1,
-        input: { email: 'bs@new.com' },
-      };
+    const oldUser = {
+      email: 'bs@email.com',
+      verified: true,
+    };
+    const editProfileArgs = {
+      userId: 1,
+      input: { email: 'bs@new.com' },
+    };
 
-      const newVerification = {
-        code: 'code',
-      };
+    const newVerification = {
+      code: 'code',
+    };
 
-      const newUser = {
-        verified: false,
+    const newUser = {
+      verified: false,
+      email: editProfileArgs.input.email,
+    };
+    it('should fail if email if find currently exist email', async () => {
+      usersRepository.count.mockResolvedValue(editProfileArgs.userId);
+      const result = await service.editProfile(editProfileArgs.userId, {
         email: editProfileArgs.input.email,
-      };
+      });
+      expect(usersRepository.count).toHaveBeenCalledTimes(1);
+      expect(result).toEqual({ ok: false, error: 'The email is exist' });
+    });
 
+    it('should change email', async () => {
+      usersRepository.count.mockResolvedValue(undefined);
       usersRepository.findOne.mockResolvedValue(oldUser);
       verificationsRepository.create.mockReturnValue(newVerification);
       verificationsRepository.save.mockResolvedValue(newVerification);
