@@ -13,6 +13,7 @@ import { UserProfileInput, UserProfileOutput } from './dtos/user-profile.dto';
 import { EditProfileOutput, EidtProfileInput } from './dtos/edit-profile.dto';
 import { DeleteAccountOutput } from './dtos/delete-account.dto';
 import { VerifyEmailInput, VerifyEmailOutput } from './dtos/verify-email.dto';
+import { Role } from 'src/auth/role.decorator';
 
 @Resolver((of) => User)
 export class UsersResolver {
@@ -30,14 +31,14 @@ export class UsersResolver {
     return this.userService.login(loginInput);
   }
 
-  @UseGuards(AuthGuard)
   @Query((returns) => User)
+  @Role(['Any'])
   me(@AuthUser() authUser: User) {
     return authUser;
   }
 
-  @UseGuards(AuthGuard)
   @Query((returns) => UserProfileOutput)
+  @Role(['Any'])
   userProfile(
     @Args() userProfileInput: UserProfileInput,
   ): Promise<UserProfileOutput> {
@@ -46,6 +47,7 @@ export class UsersResolver {
 
   @UseGuards(AuthGuard)
   @Mutation((returns) => EditProfileOutput)
+  @Role(['Any'])
   editProfile(
     @AuthUser() authUser: User,
     @Args('input') editProfileInput: EidtProfileInput,
@@ -55,6 +57,7 @@ export class UsersResolver {
 
   @UseGuards(AuthGuard)
   @Mutation((returns) => DeleteAccountOutput)
+  @Role(['Any'])
   deleteAccount(@AuthUser() authUser: User): Promise<DeleteAccountOutput> {
     return this.userService.deletAccount(authUser.id);
   }
