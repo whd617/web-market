@@ -19,3 +19,11 @@ The Backend of Nubber Eats Clone
 - See Profile
 - Edit Profile
 - Verify Email
+- Delete User Account
+
+## Restaurant Model
+
+- name
+- category
+- address
+- coverImage
