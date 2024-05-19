@@ -19,6 +19,7 @@ import { Restaurant } from './restaurants/entities/restaurant.entity';
 import { Category } from './restaurants/entities/category.entity';
 import { RestaurantsModule } from './restaurants/restaurants.module';
 import { AuthModule } from './auth/auth.module';
+import { CustomExModule } from './custom/custom-ex.module';
 
 @Module({
   imports: [
@@ -67,6 +68,7 @@ import { AuthModule } from './auth/auth.module';
     AuthModule,
     UsersModule,
     RestaurantsModule,
+    CustomExModule.forCustomRepository([Category]),
   ],
   controllers: [],
   providers: [],
