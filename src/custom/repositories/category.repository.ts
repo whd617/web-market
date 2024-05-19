@@ -1,6 +1,6 @@
 import { Category } from 'src/restaurants/entities/category.entity';
 import { Repository } from 'typeorm';
-import { CustomExRepository } from '../custom-ex.decorator';
+import { CustomExRepository } from '../typeorm-ex.decorator';
 
 @CustomExRepository(Category)
 export class CategoryRepository extends Repository<Category> {

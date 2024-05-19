@@ -19,7 +19,9 @@ import { Restaurant } from './restaurants/entities/restaurant.entity';
 import { Category } from './restaurants/entities/category.entity';
 import { RestaurantsModule } from './restaurants/restaurants.module';
 import { AuthModule } from './auth/auth.module';
-import { CustomExModule } from './custom/custom-ex.module';
+import { TypeOrmExModule } from './custom/typeorm-ex.module';
+import { CategoryRepository } from './custom/repositories/category.repository';
+import { OwnerIdentifyRestaurantRepository } from './custom/repositories/owner-identify.repository';
 
 @Module({
   imports: [
@@ -52,6 +54,10 @@ import { CustomExModule } from './custom/custom-ex.module';
         process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
       entities: [User, Verification, Restaurant, Category],
     }),
+    TypeOrmExModule.forCustomRepository([
+      CategoryRepository,
+      OwnerIdentifyRestaurantRepository,
+    ]),
     GraphQLModule.forRoot({
       driver: ApolloDriver,
       autoSchemaFile: true,
@@ -68,7 +74,6 @@ import { CustomExModule } from './custom/custom-ex.module';
     AuthModule,
     UsersModule,
     RestaurantsModule,
-    CustomExModule.forCustomRepository([Category]),
   ],
   controllers: [],
   providers: [],

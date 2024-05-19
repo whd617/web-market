@@ -13,6 +13,11 @@ import {
   EditRestaurantOutput,
 } from './dtos/edit-restaurant.dto';
 import { CategoryRepository } from 'src/custom/repositories/category.repository';
+import {
+  DeleteRestaurantInput,
+  DeleteRestaurantOutput,
+} from './dtos/delete-restaurant.dto';
+import { OwnerIdentifyRestaurantRepository } from 'src/custom/repositories/owner-identify.repository';
 
 @Injectable()
 export class RestaurantService {
@@ -20,6 +25,7 @@ export class RestaurantService {
     @InjectRepository(Restaurant)
     private readonly restaurants: Repository<Restaurant>,
     private readonly categories: CategoryRepository,
+    private readonly OwnerIdentifyRestaurant: OwnerIdentifyRestaurantRepository,
   ) {}
 
   async createRestaurant(
@@ -53,22 +59,10 @@ export class RestaurantService {
     editRestaurantInput: EditRestaurantInput,
   ): Promise<EditRestaurantOutput> {
     try {
-      const restaurant = await this.restaurants.findOne({
-        where: { id: editRestaurantInput.restaurantId },
-      });
-
-      if (!restaurant) {
-        return {
-          ok: false,
-          error: 'Restaurant not found',
-        };
-      }
-      if (owner.id !== restaurant.ownerId) {
-        return {
-          ok: false,
-          error: "You can't edit a restaurant that you don't own",
-        };
-      }
+      await this.OwnerIdentifyRestaurant.modifyRestaurantOwner(
+        owner.id,
+        editRestaurantInput.restaurantId,
+      );
 
       let category: Category = null;
 
@@ -90,10 +84,32 @@ export class RestaurantService {
       return {
         ok: true,
       };
-    } catch {
+    } catch (error) {
+      console.log(error);
       return {
         ok: false,
         error: 'Could not edit Restaurant',
+      };
+    }
+  }
+
+  async deleteRestaurant(
+    owner: User,
+    { restaurantId }: DeleteRestaurantInput,
+  ): Promise<DeleteRestaurantOutput> {
+    try {
+      await this.OwnerIdentifyRestaurant.modifyRestaurantOwner(
+        owner.id,
+        restaurantId,
+      );
+      await this.restaurants.delete({ id: restaurantId });
+      return {
+        ok: true,
+      };
+    } catch {
+      return {
+        ok: false,
+        error: 'Could not delete Restaurant',
       };
     }
   }
