@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Restaurant } from './entities/restaurant.entity';
 import { RestaurantService } from './restaurants.service';
-import { RestaurantResolver } from './restaurants.resolver';
+import { CategoryResolver, RestaurantResolver } from './restaurants.resolver';
 import { CategoryRepository } from 'src/custom/repositories/category.repository';
 import { TypeOrmExModule } from 'src/custom/typeorm-ex.module';
 import { OwnerIdentifyRestaurantRepository } from 'src/custom/repositories/owner-identify.repository';
@@ -16,6 +16,6 @@ import { OwnerIdentifyRestaurantRepository } from 'src/custom/repositories/owner
       OwnerIdentifyRestaurantRepository,
     ]),
   ],
-  providers: [RestaurantResolver, RestaurantService],
+  providers: [RestaurantResolver, CategoryResolver, RestaurantService],
 })
 export class RestaurantsModule {}
