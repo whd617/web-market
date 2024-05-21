@@ -20,6 +20,7 @@ import {
 import { OwnerIdentifyRestaurantRepository } from 'src/custom/repositories/owner-identify.repository';
 import { AllCategoriesOutput } from './dtos/all-categories.dto';
 import { CategoryInput, CategoryOutput } from './dtos/category.dto';
+import { RestaurantsInput, RestaurantsOutput } from './dtos/restaurants.dto';
 
 @Injectable()
 export class RestaurantService {
@@ -154,11 +155,11 @@ export class RestaurantService {
         take: 25,
         skip: (page - 1) * 25,
       });
-      category.restaurants = restaurants;
       const totalResuls = await this.countRestaurants(category);
       console.log(totalResuls);
       return {
         ok: true,
+        restaurants,
         category,
         totalPages: Math.ceil(totalResuls / 25),
       };
@@ -166,6 +167,26 @@ export class RestaurantService {
       return {
         ok: false,
         error: 'Could not load Category.',
+      };
+    }
+  }
+
+  async allRestaurants({ page }: RestaurantsInput): Promise<RestaurantsOutput> {
+    try {
+      const [restaurants, totalResults] = await this.restaurants.findAndCount({
+        skip: (page - 1) * 25,
+        take: 25,
+      });
+      return {
+        ok: true,
+        results: restaurants,
+        totalPages: Math.ceil(totalResults / 25),
+        totalResults,
+      };
+    } catch {
+      return {
+        ok: false,
+        error: 'Could not load Restaurants',
       };
     }
   }
