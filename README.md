@@ -42,3 +42,8 @@ The Backend of Nubber Eats Clone
 - Create Dish
 - Edit Dish
 - Delete Dish
+
+- Orders CRUD
+- Orders Subscription (Owner, Customer, Delivery)
+
+- Payments (CRON)
