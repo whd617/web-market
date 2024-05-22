@@ -22,6 +22,7 @@ import { AuthModule } from './auth/auth.module';
 import { TypeOrmExModule } from './custom/typeorm-ex.module';
 import { CategoryRepository } from './custom/repositories/category.repository';
 import { OwnerIdentifyRestaurantRepository } from './custom/repositories/owner-identify.repository';
+import { Dish } from './restaurants/entities/dish.entity';
 
 @Module({
   imports: [
@@ -52,7 +53,7 @@ import { OwnerIdentifyRestaurantRepository } from './custom/repositories/owner-i
       synchronize: process.env.NODE_ENV !== 'prod',
       logging:
         process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
-      entities: [User, Verification, Restaurant, Category],
+      entities: [User, Verification, Restaurant, Category, Dish],
     }),
     TypeOrmExModule.forCustomRepository([
       CategoryRepository,
