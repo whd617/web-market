@@ -1,11 +1,13 @@
 import { Test } from '@nestjs/testing';
 import { UsersService } from './users.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
+import { User, UserRole } from './entities/user.entity';
 import { Verification } from './entities/verification.entity';
 import { JwtService } from 'src/jwt/jwt.service';
 import { MailService } from 'src/mail/mail.service';
 import { Repository } from 'typeorm';
+
+jest.mock('./entities/user.entity');
 
 const mockRepository = () => ({
   findOne: jest.fn(),
@@ -64,8 +66,9 @@ describe('UserService', () => {
     const createAccountArgs = {
       email: 'bs@email.com',
       password: 'bs.password',
-      role: 0,
+      role: UserRole.Client,
     };
+
     // 이 테스트는 생성한 유저가 이미 DB에 있으면 성공의 여부 테스트
     it('should fail if user exists', async () => {
       usersRepository.findOne.mockResolvedValue({
