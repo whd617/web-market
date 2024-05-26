@@ -10,6 +10,6 @@ export class GetOrdersInput {
 
 @ObjectType()
 export class GetOrdersOutput extends CoreOutput {
-  @Field((type) => [Order])
-  orders: Order[];
+  @Field((type) => [Order], { nullable: true })
+  orders?: Order[];
 }
