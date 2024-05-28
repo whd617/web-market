@@ -1,4 +1,4 @@
-import { ApolloDriver } from '@nestjs/apollo';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import {
   MiddlewareConsumer,
   Module,
@@ -70,10 +70,31 @@ import { OrderItem } from './orders/entities/order-item.entity';
       CategoryRepository,
       OwnerIdentifyRestaurantRepository,
     ]),
-    GraphQLModule.forRoot({
+    GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: true,
-      context: ({ req }) => ({ user: req['user'] }),
+      // Subscription WebSocket 통신시 사용
+      subscriptions: {
+        'subscriptions-transport-ws': {
+          onConnect: (headersRaw: Record<string, unknown>) => {
+            console.log(headersRaw);
+            const headers = Object.keys(headersRaw).reduce((dest, key) => {
+              dest[key.toLowerCase()] = headersRaw[key];
+              return dest;
+            }, {});
+
+            return {
+              req: {
+                headers,
+              },
+            };
+          },
+        },
+      },
+      // Http 통신시 사용
+      context: ({ req }) => {
+        return { user: req['user'] };
+      },
     }),
     JwtModule.forRoot({
       privateKey: process.env.PRIVATE_KEY,
