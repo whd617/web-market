@@ -1,10 +1,5 @@
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import {
-  MiddlewareConsumer,
-  Module,
-  NestModule,
-  RequestMethod,
-} from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
@@ -12,7 +7,6 @@ import * as Joi from 'joi';
 import { UsersModule } from './users/users.module';
 import { User } from './users/entities/user.entity';
 import { JwtModule } from './jwt/jwt.module';
-import { JwtMiddleware } from './jwt/jwt.middleware';
 import { Verification } from './users/entities/verification.entity';
 import { MailModule } from './mail/mail.module';
 import { Restaurant } from './restaurants/entities/restaurant.entity';
@@ -76,25 +70,13 @@ import { OrderItem } from './orders/entities/order-item.entity';
       // Subscription WebSocket 통신시 사용
       subscriptions: {
         'subscriptions-transport-ws': {
-          onConnect: (headersRaw: Record<string, unknown>) => {
-            console.log(headersRaw);
-            const headers = Object.keys(headersRaw).reduce((dest, key) => {
-              dest[key.toLowerCase()] = headersRaw[key];
-              return dest;
-            }, {});
-
-            return {
-              req: {
-                headers,
-              },
-            };
-          },
+          onConnect: (connectionParams: any) => ({
+            token: connectionParams['x-jwt'],
+          }),
         },
       },
       // Http 통신시 사용
-      context: ({ req }) => {
-        return { user: req['user'] };
-      },
+      context: ({ req }) => ({ token: req.headers['x-jwt'] }),
     }),
     JwtModule.forRoot({
       privateKey: process.env.PRIVATE_KEY,
@@ -113,12 +95,5 @@ import { OrderItem } from './orders/entities/order-item.entity';
   providers: [],
 })
 
-// Jwt Middleware 설정하기
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(JwtMiddleware).forRoutes({
-      path: '/graphql',
-      method: RequestMethod.POST,
-    });
-  }
-}
+// Jwt Middleware 설정하기(인증처리) X
+export class AppModule {}
