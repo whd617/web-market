@@ -10,7 +10,11 @@ import { Dish } from 'src/restaurants/entities/dish.entity';
 import { GetOrdersInput, GetOrdersOutput } from './dtos/get-orders.dto';
 import { GetOrderInput, GetOrderOutput } from './dtos/get-order.dto';
 import { EditOrderInput, EditOrderOutput } from './dtos/edit-order.dto';
-import { NEW_PENDING_ORDER, PUB_SUB } from 'src/common/common.constants';
+import {
+  NEW_COOKED_ORDER,
+  NEW_PENDING_ORDER,
+  PUB_SUB,
+} from 'src/common/common.constants';
 import { PubSub } from 'graphql-subscriptions';
 
 @Injectable()
@@ -91,7 +95,8 @@ export class OrderService {
           items: orderItems,
         }),
       );
-      // subscription에 order(주문내역)과 ownerId를 전달
+
+      // subscription에 trigger를 통해 order(주문내역)과 ownerId를 전달
       await this.pubSub.publish(NEW_PENDING_ORDER, {
         pendingOrders: { order, ownerId: restaurant.ownerId },
       });
@@ -203,7 +208,7 @@ export class OrderService {
     try {
       const order = await this.orders.findOne({
         where: { id: orderId },
-        relations: ['restaurant'],
+        relations: ['restaurant', 'customer', 'driver'],
       });
       if (!order) {
         return {
@@ -243,7 +248,15 @@ export class OrderService {
           error: "You can't do that.",
         };
       }
-      await this.orders.save([{ id: orderId, status }]);
+      await this.orders.save({ id: orderId, status });
+
+      if (user.role === UserRole.Owner) {
+        if (status === OrderStatus.Cooked) {
+          await this.pubSub.publish(NEW_COOKED_ORDER, {
+            cookedOrders: { ...order, status },
+          });
+        }
+      }
       return {
         ok: true,
       };

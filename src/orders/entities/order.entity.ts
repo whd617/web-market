@@ -6,7 +6,6 @@ import {
   registerEnumType,
 } from '@nestjs/graphql';
 import { CoreEntity } from 'src/common/entities/core.entity';
-import { Dish } from 'src/restaurants/entities/dish.entity';
 import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
@@ -38,6 +37,8 @@ export class Order extends CoreEntity {
   @ManyToOne((type) => User, (user) => user.orders, {
     onDelete: 'SET NULL',
     nullable: true,
+    // TypeOrm으로 해당 entity를 호출시 자동으로 해당 relationshp을 호출
+    eager: true,
   })
   customer?: User;
 
@@ -49,6 +50,8 @@ export class Order extends CoreEntity {
   @ManyToOne((type) => User, (user) => user.rides, {
     onDelete: 'SET NULL',
     nullable: true,
+    // TypeOrm으로 해당 entity를 호출시 자동으로 해당 relationshp을 호출
+    eager: true,
   })
   driver?: User;
 
@@ -59,6 +62,8 @@ export class Order extends CoreEntity {
   @ManyToOne((type) => Restaurant, (restaurant) => restaurant.orders, {
     onDelete: 'SET NULL',
     nullable: true,
+    // TypeOrm으로 해당 entity를 호출시 자동으로 해당 relationshp을 호출
+    eager: true,
   })
   restaurant?: Restaurant;
 
