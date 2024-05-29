@@ -91,7 +91,10 @@ export class OrderService {
           items: orderItems,
         }),
       );
-      await this.pubSub.publish(NEW_PENDING_ORDER, { pendingOrders: order });
+      // subscription에 order(주문내역)과 ownerId를 전달
+      await this.pubSub.publish(NEW_PENDING_ORDER, {
+        pendingOrders: { order, ownerId: restaurant.ownerId },
+      });
       return {
         ok: true,
       };
