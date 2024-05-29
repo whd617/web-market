@@ -44,6 +44,10 @@ The Backend of Nubber Eats Clone
 - Delete Dish
 
 - Orders CRUD
-- Orders Subscription (Owner, Customer, Delivery)
+- Orders Subscription (Owner, Customer, Delivery):
+
+  - Pending Orders (Owner(Subscrition: newOrder)) (Customer(Trigger: createOrder(newOrder)))
+  - Order Status ([Customer, Delivery, Owner](Subscrition: orderUpdate)) (Trigger: editOrder(orderUpdate))
+  - Pending Pickup Order(Delivery) (Subscription: orderUpdate) (Trigger: editOrder(orderUpdate))
 
 - Payments (CRON)
