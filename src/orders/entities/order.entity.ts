@@ -63,7 +63,7 @@ export class Order extends CoreEntity {
   restaurant?: Restaurant;
 
   @Field((type) => [OrderItem])
-  @ManyToMany((type) => OrderItem)
+  @ManyToMany((type) => OrderItem, { eager: true })
   @JoinTable()
   items: OrderItem[];
 

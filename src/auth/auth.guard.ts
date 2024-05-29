@@ -24,7 +24,6 @@ export class AuthGuard implements CanActivate {
     }
     const gqlContext = GqlExecutionContext.create(context).getContext();
     const token = gqlContext.token;
-    console.log(token);
 
     if (token) {
       // context에 토큰이 있으면, 토큰을 decode
