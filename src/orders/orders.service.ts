@@ -12,6 +12,7 @@ import { GetOrderInput, GetOrderOutput } from './dtos/get-order.dto';
 import { EditOrderInput, EditOrderOutput } from './dtos/edit-order.dto';
 import {
   NEW_COOKED_ORDER,
+  NEW_ORDER_UPDATE,
   NEW_PENDING_ORDER,
   PUB_SUB,
 } from 'src/common/common.constants';
@@ -250,13 +251,19 @@ export class OrderService {
       }
       await this.orders.save({ id: orderId, status });
 
+      const newOrder = { ...order, status };
+      // NEW_ORDER_UPDATE를 trigger
       if (user.role === UserRole.Owner) {
         if (status === OrderStatus.Cooked) {
           await this.pubSub.publish(NEW_COOKED_ORDER, {
-            cookedOrders: { ...order, status },
+            cookedOrders: newOrder,
           });
         }
       }
+
+      // order Update의 status가 변경을 customer, owner, driver에게 모두 전달
+      await this.pubSub.publish(NEW_ORDER_UPDATE, { orderUpdates: newOrder });
+
       return {
         ok: true,
       };
