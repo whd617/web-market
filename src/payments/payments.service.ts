@@ -9,6 +9,7 @@ import {
 import { User } from 'src/users/entities/user.entity';
 import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
 import { GetPaymentsOutput } from './dtos/get-payments.dto';
+import { Cron, Interval, SchedulerRegistry, Timeout } from '@nestjs/schedule';
 
 @Injectable()
 export class PaymentsService {
@@ -16,6 +17,7 @@ export class PaymentsService {
     @InjectRepository(Payment) private readonly payments: Repository<Payment>,
     @InjectRepository(Restaurant)
     private readonly restaurants: Repository<Restaurant>,
+    private schedulerRegistry: SchedulerRegistry,
   ) {}
 
   async createPayment(
@@ -40,9 +42,19 @@ export class PaymentsService {
           error: 'You are not allowed to do this.',
         };
       }
+
       await this.payments.save(
         this.payments.create({ transactionId, user: owner, restaurant }),
       );
+
+      // restaurant promote시 로직
+      restaurant.isPromoted = true;
+      const date = new Date();
+      date.setDate(date.getDate() + 7);
+      restaurant.promotedUntil = date;
+
+      await this.restaurants.save(restaurant);
+
       return {
         ok: true,
       };
