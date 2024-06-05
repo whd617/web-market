@@ -1,29 +1,29 @@
-import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
-import { GraphQLModule } from '@nestjs/graphql';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import * as Joi from 'joi';
-import { UsersModule } from './users/users.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import Joi from 'joi';
 import { User } from './users/entities/user.entity';
-import { JwtModule } from './jwt/jwt.module';
 import { Verification } from './users/entities/verification.entity';
-import { MailModule } from './mail/mail.module';
 import { Restaurant } from './restaurants/entities/restaurant.entity';
 import { Category } from './restaurants/entities/category.entity';
-import { RestaurantsModule } from './restaurants/restaurants.module';
-import { AuthModule } from './auth/auth.module';
+import { Dish } from './restaurants/entities/dish.entity';
+import { Order } from './orders/entities/order.entity';
+import { OrderItem } from './orders/entities/order-item.entity';
+import { Payment } from './payments/entities/payment.entity';
 import { TypeOrmExModule } from './custom/typeorm-ex.module';
 import { CategoryRepository } from './custom/repositories/category.repository';
 import { OwnerIdentifyRestaurantRepository } from './custom/repositories/owner-identify.repository';
-import { Dish } from './restaurants/entities/dish.entity';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { JwtModule } from './jwt/jwt.module';
+import { MailModule } from './mail/mail.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
+import { RestaurantsModule } from './restaurants/restaurants.module';
 import { OrdersModule } from './orders/orders.module';
-import { Order } from './orders/entities/order.entity';
-import { OrderItem } from './orders/entities/order-item.entity';
 import { CommonModule } from './common/common.module';
 import { PaymentsModule } from './payments/payments.module';
-import { Payment } from './payments/entities/payment.entity';
-import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [

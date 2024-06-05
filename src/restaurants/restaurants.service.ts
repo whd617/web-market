@@ -1,23 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Restaurant } from './entities/restaurant.entity';
 import { Raw, Repository } from 'typeorm';
+import { Dish } from './entities/dish.entity';
+import { OwnerIdentifyRestaurantRepository } from 'src/custom/repositories/owner-identify.repository';
+import { User } from 'src/users/entities/user.entity';
 import {
   CreateRestaurantInput,
   CreateRestaurantOutput,
 } from './dtos/create-restaurant.dto';
-import { Restaurant } from './entities/restaurant.entity';
-import { User } from 'src/users/entities/user.entity';
-import { Category } from './entities/category.entity';
 import {
   EditRestaurantInput,
   EditRestaurantOutput,
 } from './dtos/edit-restaurant.dto';
-import { CategoryRepository } from 'src/custom/repositories/category.repository';
+import { Category } from './entities/category.entity';
 import {
   DeleteRestaurantInput,
   DeleteRestaurantOutput,
 } from './dtos/delete-restaurant.dto';
-import { OwnerIdentifyRestaurantRepository } from 'src/custom/repositories/owner-identify.repository';
 import { AllCategoriesOutput } from './dtos/all-categories.dto';
 import { CategoryInput, CategoryOutput } from './dtos/category.dto';
 import { RestaurantsInput, RestaurantsOutput } from './dtos/restaurants.dto';
@@ -26,11 +26,11 @@ import {
   SearchRestaurantInput,
   SearchRestaurantOutput,
 } from './dtos/search-restaurant.dto';
-import { CreateDishInput, CreateDishOutput } from './dtos/create-dish.dto';
-import { Dish } from './entities/dish.entity';
+import { CreateDishInput, CreateDishOutput } from './dtos/create.dish.dto';
 import { EditDishInput, EditDishOutput } from './dtos/edit-dish.dto';
 import { DeleteDishInput } from './dtos/delete-dish.dto';
 import { DeleteAccountOutput } from 'src/users/dtos/delete-account.dto';
+import { CategoryRepository } from 'src/custom/repositories/category.repository';
 
 @Injectable()
 export class RestaurantService {
@@ -242,7 +242,7 @@ export class RestaurantService {
     query,
   }: SearchRestaurantInput): Promise<SearchRestaurantOutput> {
     try {
-      const [restaurant, totalResults] = await this.restaurants.findAndCount({
+      const [restaurants, totalResults] = await this.restaurants.findAndCount({
         where: { name: Raw((name) => `${name} ILIKE '%${query}%'`) },
         skip: (page - 1) * 25,
         take: 25,
@@ -250,7 +250,7 @@ export class RestaurantService {
 
       return {
         ok: true,
-        restaurant,
+        restaurants,
         totalResults,
         totalPages: Math.ceil(totalResults / 25),
       };
