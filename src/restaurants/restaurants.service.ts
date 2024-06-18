@@ -60,6 +60,7 @@ export class RestaurantService {
 
       await this.restaurants.save(newRestaurant);
       return {
+        restaurantId: newRestaurant.id,
         ok: true,
       };
     } catch {
@@ -101,7 +102,6 @@ export class RestaurantService {
         ok: true,
       };
     } catch (error) {
-      console.log(error);
       return {
         ok: false,
         error: 'Could not edit Restaurant',
@@ -133,7 +133,6 @@ export class RestaurantService {
   async allCategories(): Promise<AllCategoriesOutput> {
     try {
       const categories = await this.categories.find();
-      console.log(categories);
       return {
         ok: true,
         categories,
@@ -213,7 +212,11 @@ export class RestaurantService {
 
   async myRestaurants(owner: User): Promise<MyRestaurantsOutput> {
     try {
-      const restaurants = await this.restaurants.find({ where: { owner } });
+      // find로 restaurants의 onwer를 가지고 restaurants을 찾기
+      const restaurants = await this.restaurants.find({
+        where: { owner: owner.restaurants },
+      });
+      console.log(restaurants);
       return {
         restaurants,
         ok: true,

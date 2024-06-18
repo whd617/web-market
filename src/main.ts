@@ -8,6 +8,7 @@ async function bootstrap() {
     origin: 'http://localhost:3000',
     optionsSuccessStatus: 200, // 구형 브라우저 지원을 위해
   };
+  // Cors policy 해결
   app.enableCors(corsOptions);
   app.useGlobalPipes(new ValidationPipe());
 

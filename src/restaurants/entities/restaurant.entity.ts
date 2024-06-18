@@ -3,9 +3,9 @@ import { IsString, Length } from 'class-validator';
 import { CoreEntity } from 'src/common/entities/core.entity';
 import { Column, Entity, ManyToOne, OneToMany, RelationId } from 'typeorm';
 import { Category } from './category.entity';
-import { User } from 'src/users/entities/user.entity';
 import { Dish } from './dish.entity';
 import { Order } from 'src/orders/entities/order.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @InputType('RestaurantInputType', { isAbstract: true })
 @ObjectType()
@@ -36,7 +36,7 @@ export class Restaurant extends CoreEntity {
   category: Category;
 
   // user가 지워졌으면 restaurant도 지워지게 설정
-  @Field((type) => User, { nullable: true })
+  @Field((type) => User)
   @ManyToOne((type) => User, (user) => user.restaurants, {
     onDelete: 'CASCADE',
   })
