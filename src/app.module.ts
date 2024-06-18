@@ -24,6 +24,7 @@ import { RestaurantsModule } from './restaurants/restaurants.module';
 import { OrdersModule } from './orders/orders.module';
 import { CommonModule } from './common/common.module';
 import { PaymentsModule } from './payments/payments.module';
+import { UploadsModule } from './uploads/uploads.module';
 
 @Module({
   imports: [
@@ -42,6 +43,14 @@ import { PaymentsModule } from './payments/payments.module';
         MAILGUN_API_KEY: Joi.string().required(),
         MAILGUN_FROM_EMAIL: Joi.string().required(),
         MAILGUN_DOMAIN_NAME: Joi.string().required(),
+        AWS_DEFAULT_ACL: Joi.string().required(),
+        AWS_ACCESS_KEY_ID: Joi.string().required(),
+        AWS_SECRET_ACCESS_KEY: Joi.string().required(),
+        AWS_SDK_JS_SUPPRESS_MAINTENANCE_MODE_MESSAGE: Joi.string().required(),
+        AWS_SDK_LOAD_CONFIG: Joi.string().required(),
+        AWS_REGION: Joi.string().required(),
+        AWS_BUCKET: Joi.string().required(),
+        AWS_ACL: Joi.string().required(),
       }),
     }),
     TypeOrmModule.forRoot({
@@ -98,6 +107,17 @@ import { PaymentsModule } from './payments/payments.module';
     OrdersModule,
     CommonModule,
     PaymentsModule,
+    UploadsModule.forRoot({
+      AWS_DEFAULT_ACL: process.env.AWS_DEFAULT_ACL,
+      AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,
+      AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
+      AWS_SDK_JS_SUPPRESS_MAINTENANCE_MODE_MESSAGE:
+        process.env.AWS_SDK_JS_SUPPRESS_MAINTENANCE_MODE_MESSAGE,
+      AWS_SDK_LOAD_CONFIG: process.env.AWS_SDK_LOAD_CONFIG,
+      AWS_REGION: process.env.AWS_REGION,
+      AWS_BUCKET: process.env.AWS_BUCKET,
+      AWS_ACL: process.env.AWS_ACL,
+    }),
   ],
   controllers: [],
   providers: [],
