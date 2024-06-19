@@ -32,6 +32,7 @@ import { DeleteDishInput } from './dtos/delete-dish.dto';
 import { DeleteAccountOutput } from 'src/users/dtos/delete-account.dto';
 import { CategoryRepository } from 'src/custom/repositories/category.repository';
 import { MyRestaurantsOutput } from './dtos/my-restaurants.dto';
+import { MyRestaurantInput, MyRestaurantOutput } from './dtos/myRestaurant.dto';
 
 @Injectable()
 export class RestaurantService {
@@ -224,6 +225,27 @@ export class RestaurantService {
     } catch {
       return {
         error: 'Could not find restaurants.',
+        ok: false,
+      };
+    }
+  }
+
+  async myRestaurant(
+    owner: User,
+    { id }: MyRestaurantInput,
+  ): Promise<MyRestaurantOutput> {
+    try {
+      const restaurant = await this.restaurants.findOne({
+        where: { owner: owner.restaurants, id },
+        relations: ['menu', 'orders'],
+      });
+      return {
+        restaurant,
+        ok: true,
+      };
+    } catch {
+      return {
+        error: 'Could not find restaurant',
         ok: false,
       };
     }
