@@ -12,7 +12,7 @@ class CreateOrderItemInput {
 }
 
 @InputType()
-export class CreateOrdersInput {
+export class CreateOrderInput {
   @Field((typd) => Int)
   restaurantId: number;
 
@@ -21,4 +21,7 @@ export class CreateOrdersInput {
 }
 
 @ObjectType()
-export class CreateOrdersOutput extends CoreOutput {}
+export class CreateOrderOutput extends CoreOutput {
+  @Field((type) => Int, { nullable: true })
+  orderId?: number;
+}

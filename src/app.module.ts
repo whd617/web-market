@@ -25,7 +25,7 @@ import { OrdersModule } from './orders/orders.module';
 import { CommonModule } from './common/common.module';
 import { PaymentsModule } from './payments/payments.module';
 import { UploadsModule } from './uploads/uploads.module';
-
+import { Context } from 'apollo-server-core';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -81,16 +81,21 @@ import { UploadsModule } from './uploads/uploads.module';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: true,
+      installSubscriptionHandlers: true,
       // Subscription WebSocket 통신시 사용
       subscriptions: {
-        'subscriptions-transport-ws': {
-          onConnect: (connectionParams: any) => ({
-            token: connectionParams['x-jwt'],
-          }),
+        'graphql-ws': {
+          onConnect: (context: Context<any>) => {
+            const { connectionParams, extra } = context;
+            extra.token = connectionParams['x-jwt'];
+            console.log('extraToken -킁크랴ㅣㅌ', extra.token);
+          },
         },
       },
       // Http 통신시 사용
-      context: ({ req }) => ({ token: req.headers['x-jwt'] }),
+      context: ({ req, extra }) => {
+        return { token: req ? req.headers['x-jwt'] : extra.token };
+      },
     }),
     JwtModule.forRoot({
       privateKey: process.env.PRIVATE_KEY,

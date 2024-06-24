@@ -37,7 +37,7 @@ export class Dish extends CoreEntity {
   @Length(5)
   name: string;
 
-  @Field((type) => Number)
+  @Field((type) => Int)
   @Column()
   @IsNumber()
   price: number;
@@ -61,7 +61,7 @@ export class Dish extends CoreEntity {
   @RelationId((dish: Dish) => dish.restaurant)
   restaurantId: number;
 
-  @Field((type) => [DishOption], { nullable: false })
+  @Field((type) => [DishOption], { nullable: true })
   @Column({ type: 'json', nullable: true })
   options?: DishOption[];
 }

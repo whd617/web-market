@@ -217,7 +217,6 @@ export class RestaurantService {
       const restaurants = await this.restaurants.find({
         where: { owner: owner.restaurants },
       });
-      console.log(restaurants);
       return {
         restaurants,
         ok: true,
@@ -238,7 +237,9 @@ export class RestaurantService {
       const restaurant = await this.restaurants.findOne({
         where: { owner: owner.restaurants, id },
         relations: ['menu', 'orders'],
+        order: { orders: { createdAt: 'ASC' } },
       });
+
       return {
         restaurant,
         ok: true,

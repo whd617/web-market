@@ -2,7 +2,6 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Order, OrderStatus } from './entities/order.entity';
 import { Repository } from 'typeorm';
-import { CreateOrdersInput, CreateOrdersOutput } from './dtos/create-order.dto';
 import { User, UserRole } from 'src/users/entities/user.entity';
 import { Restaurant } from 'src/restaurants/entities/restaurant.entity';
 import { OrderItem } from './entities/order-item.entity';
@@ -18,6 +17,7 @@ import {
 } from 'src/common/common.constants';
 import { PubSub } from 'graphql-subscriptions';
 import { TakeOrderInput, TakeOrderOutput } from './dtos/take-order.dto';
+import { CreateOrderInput, CreateOrderOutput } from './dtos/create-order.dto';
 
 @Injectable()
 export class OrderService {
@@ -34,8 +34,8 @@ export class OrderService {
 
   async createOrder(
     customer: User,
-    { items, restaurantId }: CreateOrdersInput,
-  ): Promise<CreateOrdersOutput> {
+    { items, restaurantId }: CreateOrderInput,
+  ): Promise<CreateOrderOutput> {
     try {
       const restaurant = await this.restaurants.findOne({
         where: { id: restaurantId },
@@ -71,7 +71,7 @@ export class OrderService {
               // extra를 찾을 때마다 dishFinalPrice에 추가
               dishFinalPrice += dishFinalPrice;
             } else {
-              const dishOptionChoice = dishOption.choices.find(
+              const dishOptionChoice = dishOption.choices?.find(
                 (optionChoice) => optionChoice.name === itemOptions.choice,
               );
               if (dishOptionChoice) {
@@ -104,8 +104,10 @@ export class OrderService {
       });
       return {
         ok: true,
+        orderId: order.id,
       };
-    } catch {
+    } catch (e) {
+      console.log(e);
       return {
         ok: false,
         error: 'Could not create order',
@@ -197,7 +199,7 @@ export class OrderService {
       };
     } catch {
       return {
-        ok: true,
+        ok: false,
         error: 'Could not load order',
       };
     }
@@ -212,6 +214,7 @@ export class OrderService {
         where: { id: orderId },
         relations: ['restaurant', 'customer', 'driver'],
       });
+
       if (!order) {
         return {
           ok: false,
@@ -268,7 +271,7 @@ export class OrderService {
       return {
         ok: true,
       };
-    } catch {
+    } catch (e) {
       return {
         ok: false,
         error: 'Could not eidt order',
