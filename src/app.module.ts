@@ -79,6 +79,8 @@ import { Context } from 'apollo-server-core';
       OwnerIdentifyRestaurantRepository,
     ]),
     GraphQLModule.forRoot<ApolloDriverConfig>({
+      introspection: true,
+      playground: true,
       driver: ApolloDriver,
       autoSchemaFile: true,
       installSubscriptionHandlers: true,
@@ -88,7 +90,6 @@ import { Context } from 'apollo-server-core';
           onConnect: (context: Context<any>) => {
             const { connectionParams, extra } = context;
             extra.token = connectionParams['x-jwt'];
-            console.log('extraToken -킁크랴ㅣㅌ', extra.token);
           },
         },
       },
