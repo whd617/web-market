@@ -80,7 +80,7 @@ import { Context } from 'apollo-server-core';
     ]),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       introspection: true,
-      playground: true,
+      playground: process.env.NODE_ENV !== 'production',
       driver: ApolloDriver,
       autoSchemaFile: true,
       installSubscriptionHandlers: true,
