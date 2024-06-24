@@ -34,11 +34,11 @@ import { Context } from 'apollo-server-core';
       ignoreEnvFile: process.env.NODE_ENV === 'production',
       validationSchema: Joi.object({
         NODE_ENV: Joi.string().valid('dev', 'production', 'test').required(),
-        DB_HOST: Joi.string().required(),
-        DB_PORT: Joi.string().required(),
-        DB_NAME: Joi.string().required(),
-        DB_PASSWORD: Joi.string().required(),
-        DB_BASE: Joi.string().required(),
+        DB_HOST: Joi.string(),
+        DB_PORT: Joi.string(),
+        DB_NAME: Joi.string(),
+        DB_PASSWORD: Joi.string(),
+        DB_BASE: Joi.string(),
         PRIVATE_KEY: Joi.string().required(),
         MAILGUN_API_KEY: Joi.string().required(),
         MAILGUN_FROM_EMAIL: Joi.string().required(),
@@ -55,11 +55,16 @@ import { Context } from 'apollo-server-core';
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.DB_HOST,
-      port: +process.env.DB_PORT,
-      username: process.env.DB_NAME,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_BASE,
+      ...(process.env.DATABASE_URL
+        ? { url: process.env.DATABASE_URL }
+        : {
+            host: process.env.DB_HOST,
+            port: +process.env.DB_PORT,
+            username: process.env.DB_NAME,
+            password: process.env.DB_PASSWORD,
+            database: process.env.DB_BASE,
+          }),
+
       synchronize: process.env.NODE_ENV !== 'prod',
       logging:
         process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
