@@ -5,13 +5,12 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const corsOptions = {
-    origin: 'http://localhost:3000',
-    optionsSuccessStatus: 200, // 구형 브라우저 지원을 위해
+    origin: true,
+    credentials: true,
   };
+  app.useGlobalPipes(new ValidationPipe());
   // Cors policy 해결
   app.enableCors(corsOptions);
-  app.useGlobalPipes(new ValidationPipe());
-
   await app.listen(process.env.PORT || 4000);
 }
 bootstrap();
